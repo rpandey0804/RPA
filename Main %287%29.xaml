@@ -1,0 +1,775 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="Main_1"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing"
+ xmlns:ui="http://schemas.uipath.com/workflow/activities"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>UiPath.Core</AssemblyReference>
+      <AssemblyReference>UiPath.Core.Activities</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualStudio.Services.Common</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Flowchart sap2010:Annotation.AnnotationText="Code to make a sketch on MS Paint using UiPath.&#xA;&#xA;input: any bitmap image&#xA;output:  same sketch on paint" sap2010:WorkflowViewState.IdRef="Flowchart_1">
+    <Flowchart.Variables>
+      <Variable x:TypeArguments="sd:Bitmap" Name="image" />
+      <Variable x:TypeArguments="x:Int32" Name="height" />
+      <Variable x:TypeArguments="x:Int32" Name="width" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="x" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="y" />
+      <Variable x:TypeArguments="sd:Color" Name="color" />
+      <Variable x:TypeArguments="scg:List(x:String)" Default="[new List(of string)]" Name="listCoordinates" />
+      <Variable x:TypeArguments="x:Int32" Default="0" Name="i" />
+      <Variable x:TypeArguments="x:Int32" Name="j" />
+    </Flowchart.Variables>
+    <Flowchart.StartNode>
+      <FlowStep x:Name="__ReferenceID7" sap2010:WorkflowViewState.IdRef="FlowStep_18">
+        <Assign DisplayName="Get new image" sap2010:WorkflowViewState.IdRef="Assign_15">
+          <Assign.To>
+            <OutArgument x:TypeArguments="sd:Bitmap">[image]</OutArgument>
+          </Assign.To>
+          <Assign.Value>
+            <InArgument x:TypeArguments="sd:Bitmap">[new Bitmap("ab1.bmp", true)]</InArgument>
+          </Assign.Value>
+        </Assign>
+        <FlowStep.Next>
+          <FlowStep x:Name="__ReferenceID1" sap2010:WorkflowViewState.IdRef="FlowStep_8">
+            <Assign DisplayName="Get image height" sap2010:WorkflowViewState.IdRef="Assign_1">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:Int32">[height]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:Int32">[image.Height]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <FlowStep.Next>
+              <FlowStep x:Name="__ReferenceID2" sap2010:WorkflowViewState.IdRef="FlowStep_9">
+                <Assign DisplayName="Get image width" sap2010:WorkflowViewState.IdRef="Assign_2">
+                  <Assign.To>
+                    <OutArgument x:TypeArguments="x:Int32">[width]</OutArgument>
+                  </Assign.To>
+                  <Assign.Value>
+                    <InArgument x:TypeArguments="x:Int32">[image.Width]</InArgument>
+                  </Assign.Value>
+                </Assign>
+                <FlowStep.Next>
+                  <FlowStep x:Name="__ReferenceID3" sap2010:WorkflowViewState.IdRef="FlowStep_11">
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_7">
+                      <Assign.To>
+                        <OutArgument x:TypeArguments="x:Int32">[y]</OutArgument>
+                      </Assign.To>
+                      <Assign.Value>
+                        <InArgument x:TypeArguments="x:Int32">0</InArgument>
+                      </Assign.Value>
+                    </Assign>
+                    <FlowStep.Next>
+                      <FlowStep x:Name="__ReferenceID0" sap2010:WorkflowViewState.IdRef="FlowStep_7">
+                        <While DisplayName="Loop through each pixel and check value of each pixel" sap2010:WorkflowViewState.IdRef="While_1" Condition="[y &lt; height]">
+                          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
+                            <Assign sap2010:WorkflowViewState.IdRef="Assign_6">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:Int32">[x]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:Int32">0</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <While DisplayName="Loop through each pixel and check value of each pixel" sap2010:WorkflowViewState.IdRef="While_2" Condition="[x &lt; width]">
+                              <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
+                                <Assign sap2010:WorkflowViewState.IdRef="Assign_5">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="sd:Color">[color]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="sd:Color">[image.GetPixel(x, y)]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <If Condition="[color.R &lt;= 100 and color.G &lt;= 100 and color.B &lt;= 100]" DisplayName="If the R,G,B values are less than 100(black), store them to a collection" sap2010:WorkflowViewState.IdRef="If_1">
+                                  <If.Then>
+                                    <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
+                                      <AddToCollection x:TypeArguments="x:String" Collection="[listCoordinates]" DisplayName="Store x,y coordinates to the list" sap2010:WorkflowViewState.IdRef="AddToCollection`1_1" Item="[(x-200).ToString + &quot;:&quot; + (y-200).ToString]" />
+                                    </Sequence>
+                                  </If.Then>
+                                </If>
+                                <Assign DisplayName="Increment x" sap2010:WorkflowViewState.IdRef="Assign_4">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:Int32">[x]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:Int32">[x + 1]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                              </Sequence>
+                            </While>
+                            <Assign DisplayName="Increment y" sap2010:WorkflowViewState.IdRef="Assign_3">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:Int32">[y]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:Int32">[y + 1]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                          </Sequence>
+                        </While>
+                        <FlowStep.Next>
+                          <FlowStep x:Name="__ReferenceID4" sap2010:WorkflowViewState.IdRef="FlowStep_14">
+                            <Assign DisplayName="Assign loop iterator" sap2010:WorkflowViewState.IdRef="Assign_10">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:Int32">[i]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:Int32">0</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <FlowStep.Next>
+                              <FlowStep x:Name="__ReferenceID6" sap2010:WorkflowViewState.IdRef="FlowStep_17">
+                                <Assign DisplayName="Assign loop iterator" sap2010:WorkflowViewState.IdRef="Assign_12">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:Int32">[j]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:Int32">[Convert.ToInt32(listCoordinates.Count) - 1]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <FlowStep.Next>
+                                  <FlowStep x:Name="__ReferenceID8" sap2010:WorkflowViewState.IdRef="FlowStep_19">
+                                    <ui:OpenApplication ApplicationWindow="{x:Null}" Arguments="{x:Null}" TimeoutMS="{x:Null}" WorkingDirectory="{x:Null}" DisplayName="Open paint" FileName="C:\Windows\System32\mspaint.exe" sap2010:WorkflowViewState.IdRef="OpenApplication_1" InformativeScreenshot="eb5161c227077e83adcef2db7c9f534d" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='* - Paint' /&gt;">
+                                      <ui:OpenApplication.Body>
+                                        <ActivityAction x:TypeArguments="x:Object">
+                                          <ActivityAction.Argument>
+                                            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                                          </ActivityAction.Argument>
+                                          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_13" />
+                                        </ActivityAction>
+                                      </ui:OpenApplication.Body>
+                                    </ui:OpenApplication>
+                                    <FlowStep.Next>
+                                      <FlowStep x:Name="__ReferenceID5" sap2010:WorkflowViewState.IdRef="FlowStep_16">
+                                        <Parallel DisplayName="Loop the list from both sides and  perform click on Paint" sap2010:WorkflowViewState.IdRef="Parallel_3">
+                                          <While DisplayName="Loop from 0 to half the list" sap2010:WorkflowViewState.IdRef="While_5" Condition="[i &lt; (listCoordinates.Count/2)]">
+                                            <Sequence sap2010:Annotation.AnnotationText="Please note that the use of parallel depends on the OS to run properly. If you have less memory or OS cores, it might be a problem. In that case, remove parallel and perform simple clicks." sap2010:WorkflowViewState.IdRef="Sequence_9">
+                                              <Parallel sap2010:WorkflowViewState.IdRef="Parallel_6">
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_68" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_69" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+1).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+1).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_70" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+2).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+2).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_71" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+3).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+3).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_72" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+4).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+4).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_73" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+5).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+5).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_74" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+6).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+6).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_75" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+7).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+7).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_76" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+8).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+8).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_77" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+9).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+9).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_78" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+10).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+10).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_79" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+11).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+11).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_80" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+12).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+12).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_81" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+13).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+13).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_82" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(i+14).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(i+14).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                              </Parallel>
+                                              <Assign sap2010:WorkflowViewState.IdRef="Assign_13">
+                                                <Assign.To>
+                                                  <OutArgument x:TypeArguments="x:Int32">[i]</OutArgument>
+                                                </Assign.To>
+                                                <Assign.Value>
+                                                  <InArgument x:TypeArguments="x:Int32">[i + 15]</InArgument>
+                                                </Assign.Value>
+                                              </Assign>
+                                            </Sequence>
+                                          </While>
+                                          <While DisplayName="Loop reverse from end of the list to half the size" sap2010:WorkflowViewState.IdRef="While_6" Condition="[j &gt; ((listCoordinates.Count/2) + 1)]">
+                                            <Sequence sap2010:Annotation.AnnotationText="Please note that the use of parallel depends on the OS to run properly. If you have less memory or OS cores, it might be a problem. In that case, remove parallel and perform simple clicks." sap2010:WorkflowViewState.IdRef="Sequence_10">
+                                              <Parallel sap2010:WorkflowViewState.IdRef="Parallel_7">
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_83" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="True">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_84" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-1).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-1).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_85" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-2).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-2).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_86" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-3).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-3).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_87" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-4).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-4).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_88" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-5).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-5).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_89" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-6).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-6).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_90" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-7).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-7).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_91" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-8).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-8).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_92" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-9).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-9).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_93" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-10).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-10).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_94" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-11).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-11).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_95" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-12).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-12).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_96" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-13).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-13).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                                <ui:Click ClickType="CLICK_SINGLE" DelayBefore="0" DelayMS="0" DisplayName="Click 'Afx:00007FF63D840000:8'" sap2010:WorkflowViewState.IdRef="Click_97" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
+                                                  <ui:Click.CursorPosition>
+                                                    <ui:CursorPosition OffsetX="[Convert.ToInt32(listCoordinates(j-14).Split(&quot;:&quot;.ToCharArray)(0))]" OffsetY="[Convert.ToInt32(listCoordinates(j-14).Split(&quot;:&quot;.ToCharArray)(1))]" Position="Center" />
+                                                  </ui:Click.CursorPosition>
+                                                  <ui:Click.Target>
+                                                    <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="eeb14c22c0ee26e3d886b61e92542f8f" Selector="&lt;wnd app='mspaint.exe' cls='MSPaintApp' title='Untitled - Paint' /&gt;&lt;wnd cls='Afx:*' idx='1' /&gt;" WaitForReady="INTERACTIVE" />
+                                                  </ui:Click.Target>
+                                                </ui:Click>
+                                              </Parallel>
+                                              <Assign sap2010:WorkflowViewState.IdRef="Assign_14">
+                                                <Assign.To>
+                                                  <OutArgument x:TypeArguments="x:Int32">[j]</OutArgument>
+                                                </Assign.To>
+                                                <Assign.Value>
+                                                  <InArgument x:TypeArguments="x:Int32">[j-15]</InArgument>
+                                                </Assign.Value>
+                                              </Assign>
+                                            </Sequence>
+                                          </While>
+                                        </Parallel>
+                                      </FlowStep>
+                                    </FlowStep.Next>
+                                  </FlowStep>
+                                </FlowStep.Next>
+                              </FlowStep>
+                            </FlowStep.Next>
+                          </FlowStep>
+                        </FlowStep.Next>
+                      </FlowStep>
+                    </FlowStep.Next>
+                  </FlowStep>
+                </FlowStep.Next>
+              </FlowStep>
+            </FlowStep.Next>
+          </FlowStep>
+        </FlowStep.Next>
+      </FlowStep>
+    </Flowchart.StartNode>
+    <x:Reference>__ReferenceID0</x:Reference>
+    <x:Reference>__ReferenceID1</x:Reference>
+    <x:Reference>__ReferenceID2</x:Reference>
+    <x:Reference>__ReferenceID3</x:Reference>
+    <x:Reference>__ReferenceID4</x:Reference>
+    <x:Reference>__ReferenceID5</x:Reference>
+    <x:Reference>__ReferenceID6</x:Reference>
+    <x:Reference>__ReferenceID7</x:Reference>
+    <x:Reference>__ReferenceID8</x:Reference>
+    <sads:DebugSymbol.Symbol>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</sads:DebugSymbol.Symbol>
+  </Flowchart>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Assign_15" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_1" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_2" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_7" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_6" sap:VirtualizedContainerService.HintSize="512,60" />
+      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="464,60" />
+      <sap2010:ViewStateData Id="AddToCollection`1_1" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="222,146">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="464,294" />
+      <sap2010:ViewStateData Id="Assign_4" sap:VirtualizedContainerService.HintSize="464,60" />
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="486,618">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="While_2" sap:VirtualizedContainerService.HintSize="512,776">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="512,60" />
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="534,1100">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="While_1" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_10" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_12" sap:VirtualizedContainerService.HintSize="242,60">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_13" sap:VirtualizedContainerService.HintSize="200,99">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="OpenApplication_1" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Click_68" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_69" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_70" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_71" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_72" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_73" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_74" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_75" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_76" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_77" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_78" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_79" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_80" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_81" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_82" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Parallel_6" sap:VirtualizedContainerService.HintSize="242,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_13" sap:VirtualizedContainerService.HintSize="242,60" />
+      <sap2010:ViewStateData Id="Sequence_9" sap:VirtualizedContainerService.HintSize="200,168">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="While_5" sap:VirtualizedContainerService.HintSize="464,326">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Click_83" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_84" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_85" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_86" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_87" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_88" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_89" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_90" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_91" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_92" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_93" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_94" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_95" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_96" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Click_97" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Parallel_7" sap:VirtualizedContainerService.HintSize="5384,152" />
+      <sap2010:ViewStateData Id="Assign_14" sap:VirtualizedContainerService.HintSize="5384,60" />
+      <sap2010:ViewStateData Id="Sequence_10" sap:VirtualizedContainerService.HintSize="5406,403">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="While_6" sap:VirtualizedContainerService.HintSize="464,326">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Parallel_3" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_16">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">200,694.5</av:Point>
+            <av:Size x:Key="ShapeSize">200,51</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_19">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">200,624</av:Point>
+            <av:Size x:Key="ShapeSize">200,51</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,675 300,694.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_17">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,550</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,610 300,624</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_14">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,470</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,530 300,550</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_7">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">200,404.5</av:Point>
+            <av:Size x:Key="ShapeSize">200,51</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,455.5 300,470</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_11">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,330</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,390 300,404.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_9">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,254.5</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,314.5 300,330</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_8">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,170</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,230 300,254.5</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_18">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">179,90</av:Point>
+            <av:Size x:Key="ShapeSize">242,60</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,150 300,170</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Flowchart_1" sap:VirtualizedContainerService.HintSize="1212,894">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <av:Point x:Key="ShapeLocation">270,2.5</av:Point>
+            <av:Size x:Key="ShapeSize">60,75</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">300,77.5 300,90</av:PointCollection>
+            <x:Double x:Key="Width">1198.0722446272828</x:Double>
+            <x:Double x:Key="Height">786.5</x:Double>
+            <x:Boolean x:Key="IsAnnotationDocked">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="1252,974" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>
