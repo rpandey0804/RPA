@@ -1,0 +1,9 @@
+
+
+
+"(?<=" + "Customer Quote # " + ")(.*?)(?=" + "\r\n" + ")"
+
+
+"(?<=" + "Account Number:" + ")(.*?)(?=" + "Quote Version" + ")"
+
+
