@@ -1,0 +1,27 @@
+Mr. D Acutt
+27 Purland Road
+Norwich
+Norfolk
+ 
+NR7 9DZ
+1413 Mr. D Acutt 15/06/2019
+JL999200A
+Salary 1.00 2235.9167 2235.92
+PAYE Tax 216.40
+National Insurance 168.84
+Student Loan 49.00
+Salary Sacrifice -111.80
+Holidays: Taken: 0.00 Remaining: 0.00
+Total Gross Pay TD 6372.36
+Total Gross Pay 2124.12
+Gross for Tax TD 6372.36
+Gross for Tax 2124.12
+Tax paid TD 649.00
+Earnings for NI 2124.00
+Earnings For NI TD 6372.00
+National Insurance TD 506.52
+Payment Period Monthly
+Employers Pension 178.88 Employers Pension TD 536.64
+Servelec Education Ltd
+Tax Code: 1250L Dept: SU Tax Period: 3 Payment Method: Direct BAC
+1689.88
