@@ -1,1 +1,30 @@
 The COST VIM Auto Accrual automation is an unattended UiPath process that runs monthly on WD1 to identify unposted VIM invoices, extract required data from SAP, apply business rules, and generate accrual postings. It prepares posting templates, uploads them into SAP, validates success, and distributes results to cost accountants. This ensures timely, accurate, and standardized accrual postings across all regions with minimal manual effort.
+
+
+
+Author: Rohit Pandey
+
+Contact Information: rohit.pandey@email.com
+ | +91-98XXXXXX12
+
+Applications Involved:
+
+UiPath Studio / Orchestrator – Process design, execution, and scheduling
+
+MS Excel – Input/output data storage and validation
+
+SAP – Transaction processing and report extraction
+
+Outlook – Sending email notifications and alerts
+
+Required External Setup:
+
+Access credentials for SAP (Finance Module) with read/write permissions
+
+Shared network folder path for log and report storage
+
+Outlook configured with service account for bot-triggered emails
+
+UiPath Orchestrator robot provisioning in the QA and Production environments
+
+Necessary queue setup in Orchestrator for transaction handling
