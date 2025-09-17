@@ -1,35 +1,101 @@
-Dear [Manager’s Name],
-I hope you are doing well.
-I would like to request your approval for my timesheet for the current week (01-Sep-2025 to 05-Sep-2025). Please find below a summary of the tasks I have worked on during this period:
-Date
-Tasks Completed
-Blockers (if any)
-Hours
-01-Sep-2025
-Attended onboarding session; Installed UiPath Studio and Visual Studio Code; Reviewed best practices documentation; Completed machine setup.
--
-8 hrs
-02-Sep-2025
-Cloned project code; Installed UiPath Studio; Reviewed SDD document.
-Waiting for license allocation.
-8 hrs
-03-Sep-2025
-Reviewed FIN-0031 SDD process; Reviewed Performer and Dispatcher framework; Reviewed SAP access; Connected with Suhil for project structure and Git repository overview.
--
-8 hrs
-04-Sep-2025
-Initiated development work on SAP module; Shared progress update with team.
-Required a process overview call to understand end-to-end workflow.
-8 hrs
-05-Sep-2025
-Continued SAP module development; Worked on SAP-related issue with IT support team.
-Required a process overview call to understand end-to-end workflow.
-8 hrs
-Total
--
--
-40 hrs
-Kindly review and approve my timesheet for this week.
-Thanks & Regards,
+' Imports are not necessary here; fully qualified names used
+Dim dt As New System.Data.DataTable
+dt.Columns.Add("DisplayName", GetType(String))
+dt.Columns.Add("Name", GetType(String))
+dt.Columns.Add("EmailAddress", GetType(String))
+dt.Columns.Add("JobTitle", GetType(String))
+dt.Columns.Add("CompanyName", GetType(String))
+dt.Columns.Add("BusinessTelephoneNumber", GetType(String))
 
-Rohit
+Dim outlookApp As Object = Nothing
+Dim ns As Object = Nothing
+Dim addrLists As Object = Nothing
+Dim gal As Object = Nothing
+
+Try
+    outlookApp = CreateObject("Outlook.Application")
+    ns = outlookApp.GetNamespace("MAPI")
+    addrLists = ns.AddressLists
+
+    ' Try to get Global Address List by name, else fallback to first list that looks like GAL
+    Dim targetName As String = If(in_AddressListName, "Global Address List")
+    Try
+        gal = addrLists(targetName)
+    Catch ex As Exception
+        ' fallback: find first address list that contains "Global" or "All Users"
+        For i As Integer = 1 To addrLists.Count
+            Dim al = addrLists(i)
+            Dim nm As String = ""
+            Try
+                nm = al.Name.ToString()
+            Catch
+            End Try
+            If nm.ToLower().Contains("global") OrElse nm.ToLower().Contains("all") Then
+                gal = al
+                Exit For
+            End If
+        Next
+    End Try
+
+    If gal Is Nothing Then
+        Throw New Exception("Global Address List not found in Outlook profile.")
+    End If
+
+    Dim entries = gal.AddressEntries
+    For i As Integer = 1 To entries.Count
+        Dim ent = entries(i)
+        Dim displayName As String = ""
+        Dim smtp As String = ""
+        Dim jobTitle As String = ""
+        Dim company As String = ""
+        Dim phone As String = ""
+        Try
+            displayName = If(ent.DisplayType IsNot Nothing, ent.Name.ToString(), ent.Name.ToString())
+        Catch : End Try
+
+        ' Many entries are Exchange users — try to get AddressEntry.GetExchangeUser
+        Try
+            Dim exch = ent.GetExchangeUser()
+            If exch IsNot Nothing Then
+                smtp = If(exch.PrimarySmtpAddress IsNot Nothing, exch.PrimarySmtpAddress.ToString(), "")
+                jobTitle = If(exch.JobTitle IsNot Nothing, exch.JobTitle.ToString(), "")
+                company = If(exch.CompanyName IsNot Nothing, exch.CompanyName.ToString(), "")
+                phone = If(exch.BusinessTelephoneNumber IsNot Nothing, exch.BusinessTelephoneNumber.ToString(), "")
+            Else
+                ' Try contact-like fields
+                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
+            End If
+        Catch
+            ' best-effort
+            Try
+                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
+            Catch : End Try
+        End Try
+
+        Dim row = dt.NewRow()
+        row("DisplayName") = displayName
+        row("Name") = ent.Name
+        row("EmailAddress") = smtp
+        row("JobTitle") = jobTitle
+        row("CompanyName") = company
+        row("BusinessTelephoneNumber") = phone
+        dt.Rows.Add(row)
+    Next
+
+    out_DT = dt
+Catch ex As Exception
+    ' bubble up error to UiPath (or set out_DT to empty table)
+    out_DT = dt
+    Throw
+Finally
+    Try
+        If ns IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(ns)
+    Catch : End Try
+    Try
+        If outlookApp IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(outlookApp)
+    Catch : End Try
+    ns = Nothing
+    outlookApp = Nothing
+    GC.Collect()
+    GC.WaitForPendingFinalizers()
+End Try
