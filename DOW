@@ -1,34 +1,40 @@
-' compute current month range
+' --- Invoke Code (VB) ---
+' Arguments:
+'   dtInput  (In)  As System.Data.DataTable
+'   filtered (Out) As System.Data.DataTable
+
 Dim firstDay As New DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)
 Dim lastDay As DateTime = firstDay.AddMonths(1).AddDays(-1)
+Dim formats() As String = {"M/d/yyyy", "MM/dd/yyyy", "yyyy-MM-dd"}
 
-Dim formats() As String = {"M/d/yyyy", "MM/dd/yyyy", "yyyy-MM-dd"} ' adjust/add formats if needed
+' create output table with same schema
+filtered = dtInput.Clone()
 
-Dim filtered As DataTable = Nothing
+For Each r As System.Data.DataRow In dtInput.Rows
+    Dim invCell As String = If(IsDBNull(r("Invoice Date")), String.Empty, r("Invoice Date").ToString().Trim())
+    If String.IsNullOrWhiteSpace(invCell) Then
+        Continue For
+    End If
 
-Dim rows = From row In dtInput.AsEnumerable()
-           Let invDateStr = row.Field(Of String)("Invoice Date").Trim()
-           Let parsed = (Function()
-                            Dim d As DateTime
-                            If DateTime.TryParseExact(invDateStr, formats, Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, d) Then
-                                Return CType(d, DateTime?)
-                            ElseIf DateTime.TryParse(invDateStr, d) Then
-                                Return CType(d, DateTime?)
-                            Else
-                                Return CType(Nothing, DateTime?)
-                            End If
-                         End Function)()
-           Where parsed.HasValue _
-                 AndAlso parsed.Value >= firstDay AndAlso parsed.Value <= lastDay _
-                 AndAlso Double.TryParse(row("Invoice Total").ToString(), Globalization.NumberStyles.Any, Globalization.CultureInfo.InvariantCulture, Nothing) _
-                     AndAlso CDbl(row("Invoice Total")) <= 10000000 _
-                 AndAlso Integer.TryParse(row("GL Account").ToString(), Nothing) _
-                     AndAlso CInt(row("GL Account")) >= 600000 AndAlso CInt(row("GL Account")) <= 699999 _
-                 AndAlso Not {"Created","ECC","Service","Suspended"}.Contains(row("fDP Account").ToString().Trim())
-           Select row
+    Dim parts() As String = invCell.Split({","c}, StringSplitOptions.RemoveEmptyEntries)
+    Dim keepRow As Boolean = False
 
-If rows.Any() Then
-    filtered = rows.CopyToDataTable()
-Else
-    filtered = dtInput.Clone() ' empty table with same schema
-End If
+    For Each p As String In parts
+        Dim candidate As String = p.Trim()
+        Dim d As DateTime
+
+        If DateTime.TryParseExact(candidate, formats, Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, d) _
+           OrElse DateTime.TryParse(candidate, d) Then
+
+            If d >= firstDay AndAlso d <= lastDay Then
+                keepRow = True
+                Exit For
+            End If
+        End If
+    Next
+
+    If keepRow Then
+        filtered.ImportRow(r)
+    End If
+Next
+' --- end Invoke Code ---
