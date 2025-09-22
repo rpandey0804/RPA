@@ -1,35 +1,34 @@
-rowsEnum = (From row In dtInput.AsEnumerable() Let invDate = If(String.IsNullOrWhiteSpace(row("Invoice Date").ToString()), DateTime.MaxValue, DateTime.Parse(row("Invoice Date").ToString().Trim())) Let invTotal = If(String.IsNullOrWhiteSpace(row("Invoice Total").ToString()), 0D, Convert.ToDecimal(System.Text.RegularExpressions.Regex.Replace(row("Invoice Total").ToString(), "[^\d\.\-]", ""))) Let glDigits = System.Text.RegularExpressions.Regex.Replace(row("GL Account").ToString().Trim(), "\D", "") Let gl = If(String.IsNullOrEmpty(glDigits), -1, Convert.ToInt32(glDigits)) Let fdp = row("fDP Account").ToString().Trim() Where invDate >= firstDay AndAlso invDate <= lastDay AndAlso invTotal <= 10000000D AndAlso gl >= 600000 AndAlso gl <= 699999 AndAlso Not (New String() {"Created","ECC","Service","Suspended"}).Contains(fdp) Select row)
+' compute current month range
+Dim firstDay As New DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)
+Dim lastDay As DateTime = firstDay.AddMonths(1).AddDays(-1)
 
+Dim formats() As String = {"M/d/yyyy", "MM/dd/yyyy", "yyyy-MM-dd"} ' adjust/add formats if needed
 
+Dim filtered As DataTable = Nothing
 
+Dim rows = From row In dtInput.AsEnumerable()
+           Let invDateStr = row.Field(Of String)("Invoice Date").Trim()
+           Let parsed = (Function()
+                            Dim d As DateTime
+                            If DateTime.TryParseExact(invDateStr, formats, Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, d) Then
+                                Return CType(d, DateTime?)
+                            ElseIf DateTime.TryParse(invDateStr, d) Then
+                                Return CType(d, DateTime?)
+                            Else
+                                Return CType(Nothing, DateTime?)
+                            End If
+                         End Function)()
+           Where parsed.HasValue _
+                 AndAlso parsed.Value >= firstDay AndAlso parsed.Value <= lastDay _
+                 AndAlso Double.TryParse(row("Invoice Total").ToString(), Globalization.NumberStyles.Any, Globalization.CultureInfo.InvariantCulture, Nothing) _
+                     AndAlso CDbl(row("Invoice Total")) <= 10000000 _
+                 AndAlso Integer.TryParse(row("GL Account").ToString(), Nothing) _
+                     AndAlso CInt(row("GL Account")) >= 600000 AndAlso CInt(row("GL Account")) <= 699999 _
+                 AndAlso Not {"Created","ECC","Service","Suspended"}.Contains(row("fDP Account").ToString().Trim())
+           Select row
 
-Option Strict On
-Imports System.Data
-Imports System.Text.RegularExpressions
-
-' Calculate first & last day of current month
-Dim firstDay As DateTime = New DateTime(Now.Year, Now.Month, 1)
-Dim lastDay As DateTime = New DateTime(Now.Year, Now.Month, DateTime.DaysInMonth(Now.Year, Now.Month))
-
-' Query: keep only rows where Invoice Date is in current month (between firstDay and lastDay inclusive),
-' invoice total <= 10,000,000, GL between 600000 and 699999 (ignore non-digits), and fDP not in blacklist.
-Dim query = From row In dtInput.AsEnumerable()
-            Let invDateStr = row("Invoice Date").ToString().Trim()
-            Let invDate = If(String.IsNullOrWhiteSpace(invDateStr), DateTime.MaxValue, DateTime.Parse(invDateStr))
-            Let invTotalStr = row("Invoice Total").ToString().Trim()
-            Let invTotalClean = If(String.IsNullOrWhiteSpace(invTotalStr), 0D, Decimal.Parse(System.Text.RegularExpressions.Regex.Replace(invTotalStr, "[^\d\.\-]", "")))
-            Let glRaw = row("GL Account").ToString().Trim()
-            Let glDigits = Regex.Replace(glRaw, "\D", "")            ' strip non-digits
-            Let gl = If(String.IsNullOrEmpty(glDigits), -1, Convert.ToInt32(glDigits))
-            Let fdp = row("fDP Account").ToString().Trim()
-            Where invDate >= firstDay AndAlso invDate <= lastDay _
-              AndAlso invTotalClean <= 10000000D _
-              AndAlso gl >= 600000 AndAlso gl <= 699999 _
-              AndAlso Not (New String() {"Created","ECC","Service","Suspended"}).Contains(fdp)
-            Select row
-
-If query.Any() Then
-    dtFiltered = query.CopyToDataTable()
+If rows.Any() Then
+    filtered = rows.CopyToDataTable()
 Else
-    dtFiltered = dtInput.Clone() ' empty table with same schema
+    filtered = dtInput.Clone() ' empty table with same schema
 End If
