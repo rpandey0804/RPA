@@ -1,5 +1,7 @@
+' Strongly-typed version - requires Microsoft.Office.Interop.Outlook referenced in the project
+'Option Strict On
 
-Dim dt As New System.Data.DataTable
+Dim dt As New System.Data.DataTable()
 dt.Columns.Add("DisplayName", GetType(String))
 dt.Columns.Add("Name", GetType(String))
 dt.Columns.Add("EmailAddress", GetType(String))
@@ -7,112 +9,81 @@ dt.Columns.Add("JobTitle", GetType(String))
 dt.Columns.Add("CompanyName", GetType(String))
 dt.Columns.Add("BusinessTelephoneNumber", GetType(String))
 
-
-
-Dim outlookApp As Object = Nothing
-Dim ns As Object = Nothing
-Dim addrLists As Object = Nothing
-Dim gal As Object = Nothing
-
-
+Dim outlookApp As Microsoft.Office.Interop.Outlook.Application = Nothing
+Dim ns As Microsoft.Office.Interop.Outlook.NameSpace = Nothing
 
 Try
-    outlookApp = CreateObject("Outlook.Application")
-    ns = outlookApp.GetNamespace("MAPI")
-    addrLists = ns.AddressLists
+    outlookApp = New Microsoft.Office.Interop.Outlook.Application()
+    ns = outlookApp.GetNamespace("MAPI")
 
+    Dim addrLists As Microsoft.Office.Interop.Outlook.AddressLists = ns.AddressLists
+    Dim gal As Microsoft.Office.Interop.Outlook.AddressList = Nothing
+    Dim targetName As String = If(String.IsNullOrEmpty(in_AddressListName), "Global Address List", in_AddressListName)
 
+    Try
+        gal = addrLists.Item(targetName)
+    Catch
+        gal = Nothing
+    End Try
 
-    ' Try to get Global Address List by name, else fallback to first list that looks like GAL
-    Dim targetName As String = If(in_AddressListName, "Global Address List")
-    Try
-        gal = addrLists(targetName)
-    Catch ex As Exception
-        ' fallback: find first address list that contains "Global" or "All Users"
-        For i As Integer = 1 To addrLists.Count
-            Dim al = addrLists(i)
-            Dim nm As String = ""
-            Try
-                nm = al.Name.ToString()
-            Catch
-            End Try
-            If nm.ToLower().Contains("global") OrElse nm.ToLower().Contains("all") Then
-                gal = al
-                Exit For
-            End If
-        Next
-    End Try
+    If gal Is Nothing Then
+        For i As Integer = 1 To addrLists.Count
+            Dim al As Microsoft.Office.Interop.Outlook.AddressList = addrLists.Item(i)
+            If al IsNot Nothing AndAlso Not String.IsNullOrEmpty(al.Name) AndAlso (al.Name.ToLower().Contains("global") OrElse al.Name.ToLower().Contains("all")) Then
+                gal = al
+                Exit For
+            End If
+        Next
+    End If
 
+    If gal Is Nothing Then Throw New Exception("Global Address List not found in Outlook profile.")
 
+    Dim entries As Microsoft.Office.Interop.Outlook.AddressEntries = gal.AddressEntries
+    For i As Integer = 1 To entries.Count
+        Dim ent As Microsoft.Office.Interop.Outlook.AddressEntry = entries.Item(i)
+        Dim displayName As String = ent.Name
+        Dim smtp As String = String.Empty
+        Dim jobTitle As String = String.Empty
+        Dim company As String = String.Empty
+        Dim phone As String = String.Empty
 
-    If gal Is Nothing Then
-        Throw New Exception("Global Address List not found in Outlook profile.")
-    End If
+        Try
+            Dim exch As Microsoft.Office.Interop.Outlook.ExchangeUser = ent.GetExchangeUser()
+            If exch IsNot Nothing Then
+                smtp = If(exch.PrimarySmtpAddress, String.Empty)
+                jobTitle = If(exch.JobTitle, String.Empty)
+                company = If(exch.CompanyName, String.Empty)
+                phone = If(exch.BusinessTelephoneNumber, String.Empty)
+            Else
+                smtp = If(ent.Address, String.Empty)
+            End If
+        Catch
+            smtp = If(ent.Address, String.Empty)
+        End Try
 
+        Dim row As System.Data.DataRow = dt.NewRow()
+        row("DisplayName") = displayName
+        row("Name") = If(ent.Name, String.Empty)
+        row("EmailAddress") = smtp
+        row("JobTitle") = jobTitle
+        row("CompanyName") = company
+        row("BusinessTelephoneNumber") = phone
+        dt.Rows.Add(row)
+    Next
 
-
-    Dim entries = gal.AddressEntries
-    For i As Integer = 1 To entries.Count
-        Dim ent = entries(i)
-        Dim displayName As String = ""
-        Dim smtp As String = ""
-        Dim jobTitle As String = ""
-        Dim company As String = ""
-        Dim phone As String = ""
-        Try
-            displayName = If(ent.DisplayType IsNot Nothing, ent.Name.ToString(), ent.Name.ToString())
-        Catch : End Try
-
-
-
-        ' Many entries are Exchange users — try to get AddressEntry.GetExchangeUser
-        Try
-            Dim exch = ent.GetExchangeUser()
-            If exch IsNot Nothing Then
-                smtp = If(exch.PrimarySmtpAddress IsNot Nothing, exch.PrimarySmtpAddress.ToString(), "")
-                jobTitle = If(exch.JobTitle IsNot Nothing, exch.JobTitle.ToString(), "")
-                company = If(exch.CompanyName IsNot Nothing, exch.CompanyName.ToString(), "")
-                phone = If(exch.BusinessTelephoneNumber IsNot Nothing, exch.BusinessTelephoneNumber.ToString(), "")
-            Else
-                ' Try contact-like fields
-                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
-            End If
-        Catch
-            ' best-effort
-            Try
-                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
-            Catch : End Try
-        End Try
-
-
-
-        Dim row = dt.NewRow()
-        row("DisplayName") = displayName
-        row("Name") = ent.Name
-        row("EmailAddress") = smtp
-        row("JobTitle") = jobTitle
-        row("CompanyName") = company
-        row("BusinessTelephoneNumber") = phone
-        dt.Rows.Add(row)
-    Next
-
-
-
-    out_DT = dt
+    out_DT = dt
 Catch ex As Exception
-    ' bubble up error to UiPath (or set out_DT to empty table)
-    out_DT = dt
-    Throw
+    out_DT = dt
+    Throw
 Finally
-    Try
-        If ns IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(ns)
-    Catch : End Try
-    Try
-        If outlookApp IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(outlookApp)
-    Catch : End Try
-    ns = Nothing
-    outlookApp = Nothing
-    GC.Collect()
-    GC.WaitForPendingFinalizers()
+    Try
+        If ns IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(ns)
+    Catch : End Try
+    Try
+        If outlookApp IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(outlookApp)
+    Catch : End Try
+    ns = Nothing
+    outlookApp = Nothing
+    GC.Collect()
+    GC.WaitForPendingFinalizers()
 End Try
- 
