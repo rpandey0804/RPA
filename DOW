@@ -1,40 +1,118 @@
-' --- Invoke Code (VB) ---
-' Arguments:
-'   dtInput  (In)  As System.Data.DataTable
-'   filtered (Out) As System.Data.DataTable
 
-Dim firstDay As New DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)
-Dim lastDay As DateTime = firstDay.AddMonths(1).AddDays(-1)
-Dim formats() As String = {"M/d/yyyy", "MM/dd/yyyy", "yyyy-MM-dd"}
+Dim dt As New System.Data.DataTable
+dt.Columns.Add("DisplayName", GetType(String))
+dt.Columns.Add("Name", GetType(String))
+dt.Columns.Add("EmailAddress", GetType(String))
+dt.Columns.Add("JobTitle", GetType(String))
+dt.Columns.Add("CompanyName", GetType(String))
+dt.Columns.Add("BusinessTelephoneNumber", GetType(String))
 
-' create output table with same schema
-filtered = dtInput.Clone()
 
-For Each r As System.Data.DataRow In dtInput.Rows
-    Dim invCell As String = If(IsDBNull(r("Invoice Date")), String.Empty, r("Invoice Date").ToString().Trim())
-    If String.IsNullOrWhiteSpace(invCell) Then
-        Continue For
-    End If
 
-    Dim parts() As String = invCell.Split({","c}, StringSplitOptions.RemoveEmptyEntries)
-    Dim keepRow As Boolean = False
+Dim outlookApp As Object = Nothing
+Dim ns As Object = Nothing
+Dim addrLists As Object = Nothing
+Dim gal As Object = Nothing
 
-    For Each p As String In parts
-        Dim candidate As String = p.Trim()
-        Dim d As DateTime
 
-        If DateTime.TryParseExact(candidate, formats, Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, d) _
-           OrElse DateTime.TryParse(candidate, d) Then
 
-            If d >= firstDay AndAlso d <= lastDay Then
-                keepRow = True
-                Exit For
-            End If
-        End If
-    Next
+Try
+    outlookApp = CreateObject("Outlook.Application")
+    ns = outlookApp.GetNamespace("MAPI")
+    addrLists = ns.AddressLists
 
-    If keepRow Then
-        filtered.ImportRow(r)
-    End If
-Next
-' --- end Invoke Code ---
+
+
+    ' Try to get Global Address List by name, else fallback to first list that looks like GAL
+    Dim targetName As String = If(in_AddressListName, "Global Address List")
+    Try
+        gal = addrLists(targetName)
+    Catch ex As Exception
+        ' fallback: find first address list that contains "Global" or "All Users"
+        For i As Integer = 1 To addrLists.Count
+            Dim al = addrLists(i)
+            Dim nm As String = ""
+            Try
+                nm = al.Name.ToString()
+            Catch
+            End Try
+            If nm.ToLower().Contains("global") OrElse nm.ToLower().Contains("all") Then
+                gal = al
+                Exit For
+            End If
+        Next
+    End Try
+
+
+
+    If gal Is Nothing Then
+        Throw New Exception("Global Address List not found in Outlook profile.")
+    End If
+
+
+
+    Dim entries = gal.AddressEntries
+    For i As Integer = 1 To entries.Count
+        Dim ent = entries(i)
+        Dim displayName As String = ""
+        Dim smtp As String = ""
+        Dim jobTitle As String = ""
+        Dim company As String = ""
+        Dim phone As String = ""
+        Try
+            displayName = If(ent.DisplayType IsNot Nothing, ent.Name.ToString(), ent.Name.ToString())
+        Catch : End Try
+
+
+
+        ' Many entries are Exchange users — try to get AddressEntry.GetExchangeUser
+        Try
+            Dim exch = ent.GetExchangeUser()
+            If exch IsNot Nothing Then
+                smtp = If(exch.PrimarySmtpAddress IsNot Nothing, exch.PrimarySmtpAddress.ToString(), "")
+                jobTitle = If(exch.JobTitle IsNot Nothing, exch.JobTitle.ToString(), "")
+                company = If(exch.CompanyName IsNot Nothing, exch.CompanyName.ToString(), "")
+                phone = If(exch.BusinessTelephoneNumber IsNot Nothing, exch.BusinessTelephoneNumber.ToString(), "")
+            Else
+                ' Try contact-like fields
+                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
+            End If
+        Catch
+            ' best-effort
+            Try
+                smtp = If(ent.Address IsNot Nothing, ent.Address.ToString(), "")
+            Catch : End Try
+        End Try
+
+
+
+        Dim row = dt.NewRow()
+        row("DisplayName") = displayName
+        row("Name") = ent.Name
+        row("EmailAddress") = smtp
+        row("JobTitle") = jobTitle
+        row("CompanyName") = company
+        row("BusinessTelephoneNumber") = phone
+        dt.Rows.Add(row)
+    Next
+
+
+
+    out_DT = dt
+Catch ex As Exception
+    ' bubble up error to UiPath (or set out_DT to empty table)
+    out_DT = dt
+    Throw
+Finally
+    Try
+        If ns IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(ns)
+    Catch : End Try
+    Try
+        If outlookApp IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(outlookApp)
+    Catch : End Try
+    ns = Nothing
+    outlookApp = Nothing
+    GC.Collect()
+    GC.WaitForPendingFinalizers()
+End Try
+ 
