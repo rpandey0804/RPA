@@ -1,89 +1,24 @@
-' Strongly-typed version - requires Microsoft.Office.Interop.Outlook referenced in the project
-'Option Strict On
-
-Dim dt As New System.Data.DataTable()
-dt.Columns.Add("DisplayName", GetType(String))
-dt.Columns.Add("Name", GetType(String))
-dt.Columns.Add("EmailAddress", GetType(String))
-dt.Columns.Add("JobTitle", GetType(String))
-dt.Columns.Add("CompanyName", GetType(String))
-dt.Columns.Add("BusinessTelephoneNumber", GetType(String))
-
-Dim outlookApp As Microsoft.Office.Interop.Outlook.Application = Nothing
-Dim ns As Microsoft.Office.Interop.Outlook.NameSpace = Nothing
+Dim Timer as Date = DateAdd("s",Timeout-2,Now())
+flag_IsAlive = False
 
 Try
-    outlookApp = New Microsoft.Office.Interop.Outlook.Application()
-    ns = outlookApp.GetNamespace("MAPI")
+	flag_IsAlive = ExecWithTimeout(Timeout, "Check Thread Status",
+	Function() 
+		Dim flag_Alive as Boolean = False
+		Try
+			flag_Alive = threadObject.IsAlive
+		Catch e As Exception
+			flag_Alive = false
+		End Try
+	Return flag_Alive
+	End Function)
 
-    Dim addrLists As Microsoft.Office.Interop.Outlook.AddressLists = ns.AddressLists
-    Dim gal As Microsoft.Office.Interop.Outlook.AddressList = Nothing
-    Dim targetName As String = If(String.IsNullOrEmpty(in_AddressListName), "Global Address List", in_AddressListName)
+Catch e As Exception When Now()>Timer
+	'Excel crashed (not responding?)
+	flag_IsAlive = True
 
-    Try
-        gal = addrLists.Item(targetName)
-    Catch
-        gal = Nothing
-    End Try
-
-    If gal Is Nothing Then
-        For i As Integer = 1 To addrLists.Count
-            Dim al As Microsoft.Office.Interop.Outlook.AddressList = addrLists.Item(i)
-            If al IsNot Nothing AndAlso Not String.IsNullOrEmpty(al.Name) AndAlso (al.Name.ToLower().Contains("global") OrElse al.Name.ToLower().Contains("all")) Then
-                gal = al
-                Exit For
-            End If
-        Next
-    End If
-
-    If gal Is Nothing Then Throw New Exception("Global Address List not found in Outlook profile.")
-
-    Dim entries As Microsoft.Office.Interop.Outlook.AddressEntries = gal.AddressEntries
-    For i As Integer = 1 To entries.Count
-        Dim ent As Microsoft.Office.Interop.Outlook.AddressEntry = entries.Item(i)
-        Dim displayName As String = ent.Name
-        Dim smtp As String = String.Empty
-        Dim jobTitle As String = String.Empty
-        Dim company As String = String.Empty
-        Dim phone As String = String.Empty
-
-        Try
-            Dim exch As Microsoft.Office.Interop.Outlook.ExchangeUser = ent.GetExchangeUser()
-            If exch IsNot Nothing Then
-                smtp = If(exch.PrimarySmtpAddress, String.Empty)
-                jobTitle = If(exch.JobTitle, String.Empty)
-                company = If(exch.CompanyName, String.Empty)
-                phone = If(exch.BusinessTelephoneNumber, String.Empty)
-            Else
-                smtp = If(ent.Address, String.Empty)
-            End If
-        Catch
-            smtp = If(ent.Address, String.Empty)
-        End Try
-
-        Dim row As System.Data.DataRow = dt.NewRow()
-        row("DisplayName") = displayName
-        row("Name") = If(ent.Name, String.Empty)
-        row("EmailAddress") = smtp
-        row("JobTitle") = jobTitle
-        row("CompanyName") = company
-        row("BusinessTelephoneNumber") = phone
-        dt.Rows.Add(row)
-    Next
-
-    out_DT = dt
-Catch ex As Exception
-    out_DT = dt
-    Throw
-Finally
-    Try
-        If ns IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(ns)
-    Catch : End Try
-    Try
-        If outlookApp IsNot Nothing Then System.Runtime.InteropServices.Marshal.ReleaseComObject(outlookApp)
-    Catch : End Try
-    ns = Nothing
-    outlookApp = Nothing
-    GC.Collect()
-    GC.WaitForPendingFinalizers()
+Catch e As Exception 
+	'WB/Macro not foundcall?
+sni
+	flag_IsAlive = False
 End Try
