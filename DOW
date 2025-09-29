@@ -1,24 +1,38 @@
-Dim Timer as Date = DateAdd("s",Timeout-2,Now())
+' Arguments:
+'   threadObject (In)  As System.Threading.Thread
+'   Timeout      (In)  As System.Int32
+'   flag_IsAlive (In/Out) As System.Boolean
+
+Dim Timer As Date = DateTime.Now.AddSeconds(Timeout - 2)
 flag_IsAlive = False
 
 Try
-	flag_IsAlive = ExecWithTimeout(Timeout, "Check Thread Status",
-	Function() 
-		Dim flag_Alive as Boolean = False
-		Try
-			flag_Alive = threadObject.IsAlive
-		Catch e As Exception
-			flag_Alive = false
-		End Try
-	Return flag_Alive
-	End Function)
+    ' Run the IsAlive check with timeout
+    Dim task = System.Threading.Tasks.Task.Run(Function()
+                                                   Dim flag_Alive As Boolean = False
+                                                   Try
+                                                       If threadObject IsNot Nothing Then
+                                                           flag_Alive = threadObject.IsAlive
+                                                       Else
+                                                           flag_Alive = False
+                                                       End If
+                                                   Catch ex As Exception
+                                                       flag_Alive = False
+                                                   End Try
+                                                   Return flag_Alive
+                                               End Function)
 
-Catch e As Exception When Now()>Timer
-	'Excel crashed (not responding?)
-	flag_IsAlive = True
+    If task.Wait(TimeSpan.FromSeconds(Timeout)) Then
+        flag_IsAlive = task.Result
+    Else
+        Throw New TimeoutException("Check Thread Status timed out")
+    End If
 
-Catch e As Exception 
-	'WB/Macro not foundcall?
-sni
-	flag_IsAlive = False
+Catch ex As TimeoutException
+    ' Operation timed out (equivalent to Excel not responding in Blue Prism)
+    flag_IsAlive = True
+
+Catch ex As Exception
+    ' Other unexpected errors
+    flag_IsAlive = False
 End Try
