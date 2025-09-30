@@ -1,38 +1,9 @@
-' Arguments:
-'   threadObject (In)  As System.Threading.Thread
-'   Timeout      (In)  As System.Int32
-'   flag_IsAlive (In/Out) As System.Boolean
+Imports System.IO
+Imports ExcelDataReader
 
-Dim Timer As Date = DateTime.Now.AddSeconds(Timeout - 2)
-flag_IsAlive = False
-
-Try
-    ' Run the IsAlive check with timeout
-    Dim task = System.Threading.Tasks.Task.Run(Function()
-                                                   Dim flag_Alive As Boolean = False
-                                                   Try
-                                                       If threadObject IsNot Nothing Then
-                                                           flag_Alive = threadObject.IsAlive
-                                                       Else
-                                                           flag_Alive = False
-                                                       End If
-                                                   Catch ex As Exception
-                                                       flag_Alive = False
-                                                   End Try
-                                                   Return flag_Alive
-                                               End Function)
-
-    If task.Wait(TimeSpan.FromSeconds(Timeout)) Then
-        flag_IsAlive = task.Result
-    Else
-        Throw New TimeoutException("Check Thread Status timed out")
-    End If
-
-Catch ex As TimeoutException
-    ' Operation timed out (equivalent to Excel not responding in Blue Prism)
-    flag_IsAlive = True
-
-Catch ex As Exception
-    ' Other unexpected errors
-    flag_IsAlive = False
-End Try
+Using stream As FileStream = File.Open("C:\Path\YourFile.xlsb", FileMode.Open, FileAccess.Read)
+    Using reader As IExcelDataReader = ExcelReaderFactory.CreateBinaryReader(stream)
+        Dim result As DataSet = reader.AsDataSet()
+        dataTableResult = result.Tables(0) ' First sheet
+    End Using
+End Using
