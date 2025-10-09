@@ -1,1 +1,238 @@
-yourDataTable.AsEnumerable().ToList().ForEach(Sub(r) r("B1") = If(r("B1").ToString = "#", "", r("B1").ToString))
+Explain Below macro code, What is the functionality-
+'code written by Matt Davis
+Option Explicit
+Dim wb As Workbook
+Dim ws As Worksheet
+Dim firstusedrow As Long
+Dim lastusedrow As Long
+Dim lastusedcol As Long
+Dim counter As Long
+Dim counterdnp As Long
+Dim ex As Integer
+Dim lastex As Integer
+Dim outtype As String
+Dim outcol As String
+Dim outref As String
+Dim importtext As String
+Sub step1()
+'Copy DSR and move to DSR-1
+Sheet5.Rows("2:100000").ClearContents
+
+With Sheet2
+    lastusedrow = .Cells(.Rows.Count, "G").End(xlUp).Row
+End With
+
+For counter = 21 To lastusedrow
+    Sheet1.Columns(Sheet2.Range("G" & counter).Value & ":" & Sheet2.Range("G" & counter).Value).Copy
+    Sheet5.Columns(Sheet2.Range("H" & counter).Value & ":" & Sheet2.Range("H" & counter).Value).PasteSpecial Paste:=xlPasteValues
+Next
+
+'Clear contents from DSR
+Sheet1.Columns("A:BH").ClearContents
+Sheet1.Rows("2:100000").ClearContents
+
+'Step1 is going to import the necessary DSR file and then export the PO#s and DP Docs to SAP for the bot to use
+'Open workbook readonly and copy paste
+Set wb = Workbooks.Open(Filename:=Sheet2.Range("A2").Value & Sheet2.Range("A3").Value, ReadOnly:=True)
+    For Each ws In wb.Worksheets
+        ws.Activate
+        If InStr(1, ws.Name, ">") Then Exit For
+    Next
+    With wb.ActiveSheet
+        If InStr(1, .Cells(1, 3), "Business") > 0 Then
+            firstusedrow = 1
+        Else
+        firstusedrow = .Cells(1, "H").End(xlDown).Row
+        End If
+        lastusedrow = .Cells(.Rows.Count, "A").End(xlUp).Row
+        lastusedcol = 60
+        .Range(.Cells(firstusedrow, 1), .Cells(lastusedrow, lastusedcol)).Copy
+        Sheet1.Range("A1").PasteSpecial xlPasteValues
+        Application.CutCopyMode = False
+        lastusedcol = 61
+        .Range(.Cells(firstusedrow, 61), .Cells(lastusedrow, lastusedcol)).Copy
+        Sheet1.Range("BG1").PasteSpecial xlPasteValues
+        Application.CutCopyMode = False
+    End With
+wb.Close
+   
+'create output textfiles to be used by the bot
+'create prior month DP documents
+Sheet5.Activate
+With Sheet5
+    lastusedrow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+
+    Open Sheet2.Range("A6").Value & "DP-1" & Replace(Sheet2.Range("A3").Value, ".xlsx", ".txt") For Output As #1
+        For counter = 2 To lastusedrow
+            If Cells(counter, 4) = "#" Then
+                'do nothing
+            Else
+                Print #1, Cells(counter, 4)
+            End If
+        Next counter
+    Close #1
+'create current month exports
+With Sheet1
+    lastusedrow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+With Sheet2
+    lastex = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+Sheet1.Activate
+For ex = 21 To lastex
+    Open Sheet2.Range("A6").Value & Sheet2.Range("A" & ex).Value & Replace(Sheet2.Range("A3").Value, ".xlsx", ".txt") For Output As #1
+    For counter = 2 To lastusedrow
+        If Cells(counter, Sheet2.Range("B" & ex).Value) = "#" Then
+            'do nothing
+        Else
+            If Sheet2.Range("A" & ex).Value = "CC" Then
+                Print #1, Mid(Cells(counter, Sheet2.Range("B" & ex).Value), 6, 12)
+            Else
+                Print #1, Cells(counter, Sheet2.Range("B" & ex).Value)
+            End If
+        End If
+    Next counter
+    Close #1
+    
+Next ex
+   
+End Sub
+Sub step2()
+'step2 is going to import the data from SAP and then create the queueload tab for load into robotics queue
+Sheet2.Activate
+Columns("O:ZZ").ClearContents
+With Sheet2
+    lastusedrow = .Cells(.Rows.Count, "D").End(xlUp).Row
+End With
+'import text files
+For counter = 2 To lastusedrow
+    Importtextfile Sheet2.Range("A6").Value & Range("D" & counter).Value, Sheet2.Range("E" & counter).Value, Sheet2.Range("D" & counter).Value
+Next
+Sheet2.Columns("AG:AG").NumberFormat = "@"
+With Sheet2
+    lastusedrow = .Cells(.Rows.Count, "S").End(xlUp).Row
+End With
+
+Sheet2.Range("R2:R" & lastusedrow).Value = "=RC[1]&RC[2]"
+
+With Sheet1
+    lastusedrow = .Cells(.Rows.Count, "BH").End(xlUp).Row
+End With
+'create formulas
+Sheet1.Range("BI2:BI" & lastusedrow).Value = "=IF(RC[-24]<>""#"",RC[-24],IFERROR(VLOOKUP(RC[-20]&RC[-18],ref!C[-43]:C[-38],8,FALSE),""0""))"
+Sheet1.Range("BJ2:BJ" & lastusedrow).Value = "=IF(RC[-39]<>""#"", RC[-39],IFERROR(VLOOKUP(RC[-21]&RC[-19],ref!C[-54]:C[-39],7,FALSE), ""0""))"
+Sheet1.Range("BK2:BK" & lastusedrow).Value = "=IF(RC[-42]<>""#"", RC[-42], IFERROR(VLOOKUP(RC[-22]&RC[-20],ref!C[-45]:C[-40],6,FALSE), ""0""))"
+Sheet1.Range("BL2:BL" & lastusedrow).Value = "=IF(RC[-45]<>""1000/#"", MID(RC[-45], 6, 15), IFERROR(VLOOKUP(RC[-23]&RC[-21],ref!C[-46]:C[-41],5,FALSE), ""0""))"
+Sheet1.Range("BM2:BM" & lastusedrow).Value = "=IF(RC[-16]<>""#"", RC[-16], IFERROR(VLOOKUP(RC[-24]&RC[-22],ref!C[-47]:C[-44],4,FALSE), RC[-16]))"
+Sheet1.Range("BN2:BN" & lastusedrow).Value = "=IF(RC[-51]<>""#"", RC[-51], IFERROR(TEXT(VLOOKUP(RC[-12]*1,ref!C[-36]:C[-34],3,FALSE), ""0000""), RC[-51]))"
+Sheet1.Range("BO2:BO" & lastusedrow).Value = "=IFERROR(VLOOKUP(RC[-6]*1,ref!C[-33]:C[-31],3,FALSE),""0"")"
+Sheet1.Range("BP2:BP" & lastusedrow).Value = "=IFERROR(VLOOKUP(RC[-1],ref!C[-41]:C[-40],2,FALSE), IFERROR(VLOOKUP(RC[-6],ref!C[-41]:C[-40],2,FALSE), ""0""))"
+Sheet1.Range("BQ2:BQ" & lastusedrow).Value = "=IF(TEXT(RC[-5], ""000000000000000"")<>""000000000000000"", RC[-5], IF(TEXT(RC[-1], ""000000000000000"")<>""000000000000000"", RC[-1], IFERROR(VLOOKUP(RC[-6]*1,ref!C[-35]:C[-34],2,FALSE),RC[-1])))"
+Sheet1.Range("BR2:BR" & lastusedrow).Value = "=IF(RC[-37]<>""#"",RC[-37],IF(RC[-41]<>""#"",RC[-41],IF(RC[-35]<>""#"",RC[-35],IF(RC[-43]<>""#"",RC[-43],IFERROR(VLOOKUP(RC[-1],ref!C[-55]:C[-53],3,FALSE),""0"")))))"
+Sheet1.Range("BS2:BS" & lastusedrow).Value = "=IFERROR(VLOOKUP(RC[-5]*1,ref!C[-33]:C[-32],2,FALSE),""0"")"
+Sheet1.Range("BT2:BT" & lastusedrow).Value = "=IF(RC[-1]=""USD"", ""UX"", ""I9"")"
+Sheet1.Range("BU2:BU" & lastusedrow).Value = "=IF(ref!R3C8 - VLOOKUP(RC[-19]*1,ref!C[-43]:C[-42],2,FALSE)>ref!R2C8, ""Age"", ""Pass"")"
+Sheet1.Range("BV2:BV" & lastusedrow).Value = "=IF(RC[-14]>ref!R2C7,""$Amt"",""Pass"")"
+Sheet1.Range("BW2:BW" & lastusedrow).Value = "=IF(RC[-74]=""NOT ASSIGNED"", ""RegionNA"", ""Pass"")"
+Sheet1.Range("BX2:BX" & lastusedrow).Value = "=IF(LEN(RC[-35])<10, ""PO"", ""Pass"")"
+Sheet1.Range("BY2:BY" & lastusedrow).Value = "=IF(RC[-34]=""#"", ""POItem"", ""Pass"")"
+Sheet1.Range("BZ2:BZ" & lastusedrow).Value = "=IF(LEFT(RC[-13], 1)<>""6"", ""GLAcct"", IF(IFERROR(VLOOKUP(RC[-13],ref!C[-69],1,FALSE), ""Pass"")=RC[-13], ""GLAcct"", ""Pass""))"
+Sheet1.Range("CA2:CA" & lastusedrow).Value = "=IF(IFERROR(VLOOKUP(RC[-33],ref!C[-69],1,FALSE),""Pass"")=RC[-33],""Vendor"",""Pass"")"
+Sheet1.Range("CB2:CB" & lastusedrow).Value = "=IF(IFERROR(VLOOKUP(RC[-14],ref!C[-69],1,FALSE),""Pass"")=RC[-14],""CoCd"",""Pass"")"
+Sheet1.Range("CC2:CC" & lastusedrow).Value = "=IF(IFERROR(VLOOKUP(RC[-12],ref!C[-69],1,FALSE), ""Pass"")=RC[-12], ""CostCenter"", ""Pass"")"
+Sheet1.Range("CD2:CD" & lastusedrow).Value = "=IF(IFERROR(VLOOKUP(RC[-27],ref!C[-69],1,FALSE), ""Pass"")=RC[-27], ""Status"", ""Pass"")"
+Sheet1.Range("CE2:CE" & lastusedrow).Value = "=IF(AND(RC[-22]<>""0"", RC[-43]=""#""), ""NWAct"", ""Pass"")"
+Sheet1.Range("CF2:CF" & lastusedrow).Value = "=IF(RC[-83]=""Not Assigned"",""No User Assigned"",IF(RC[-14]=""0"",""No User Assigned"",IF(LEN(SUBSTITUTE(RC[-11]&RC[-10]&RC[-9]&RC[-8]&RC[-7]&RC[-6]&RC[-5]&RC[-4]&RC[-3]&RC[-2]&RC[-1],""Pass"",""""))>1,""Do Not Post - ""&SUBSTITUTE(RC[-11]&RC[-10]&RC[-9]&RC[-8]&RC[-7]&RC[-6]&RC[-5]&RC[-4]&RC[-3]&RC[-2]&RC[-1],""Pass"",""""),""Post"")))"
+Sheet1.Range("CG2:CG" & lastusedrow).Value = "=R[-1]C+1"
+Sheet1.Range("CH2:CH" & lastusedrow).Value = "=IF(RC[-2]=""No User Assigned"",""N/A"",IF(TEXT(RC[-25],""000000000000000"")<>""000000000000000"",""Network"",IF(TEXT(RC[-24],""000000000000000"")<>""000000000000000"",""WBS"",IF(TEXT(RC[-23],""000000000000000"")<>""000000000000000"",""Order"",IF(TEXT(RC[-22],""00000000000000"")<>""00000000000000"",""CostCenter"",""N/A"")))))"
+Sheet1.Range("CI2:CI" & lastusedrow).Value = "=VLOOKUP(RC[-33]*1,ref!C[-57]:C[-56],2,FALSE)"
+Sheet1.Range("CJ2:CJ" & lastusedrow).Value = "=ref!R3C8-RC[-1]"
+Sheet1.Range("CK2:CK" & lastusedrow).Value = "=IF(RC[-5]=""No User Assigned"",""0"",IF(RC[-63]<>""#"",RC[-63],IFERROR(VLOOKUP(RC[-20],ref!C[-74]:C[-72],2,FALSE),""0"")))"
+Sheet1.Range("CL2:CL" & lastusedrow).Value = "=IFERROR(VLOOKUP(RC[-36]*1,ref!C[-60]:C[-57],4,FALSE), 0)"
+
+'create formula for DSR-1
+With Sheet5
+    lastusedrow = .Cells(.Rows.Count, "AC").End(xlUp).Row
+End With
+If lastusedrow > 1 Then
+
+Sheet5.Range("AE2:AE" & lastusedrow).Value = "=IFERROR(VLOOKUP(RC[-27]*1,ref!C[10]:C[12],2,FALSE), ""0"")"
+Sheet5.Columns("AE").Copy
+Sheet5.Columns("AE").PasteSpecial Paste:=xlPasteValues
+End If
+
+
+'move only necessary columns to queueload tab
+With Sheet2
+    lastusedrow = .Cells(.Rows.Count, "G").End(xlUp).Row
+End With
+
+For counter = 21 To lastusedrow
+    Sheet1.Columns(Sheet2.Range("G" & counter).Value & ":" & Sheet2.Range("G" & counter).Value).Copy
+    Sheet3.Columns(Sheet2.Range("H" & counter).Value & ":" & Sheet2.Range("H" & counter).Value).PasteSpecial Paste:=xlPasteValues
+Next
+Sheet1.Columns("CI:CI").NumberFormat = "m/d/yyyy"
+Sheet3.Columns("Q:Q").NumberFormat = "m/d/yyyy"
+Sheet5.Columns("Q:Q").NumberFormat = "m/d/yyyy"
+creatednptemp
+Sheet3.Activate
+End Sub
+Sub creatednptemp()
+Sheet4.Rows("2:10000").ClearContents
+counterdnp = 2
+With Sheet3
+    lastusedrow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+
+    For counter = 2 To lastusedrow
+        If Left(Sheet3.Range("AD" & counter).Value, 11) <> "Do Not Post" Then
+            'do nothing
+        Else
+            Sheet4.Range("A" & counterdnp & ":BO" & counterdnp + 1).Value = "/"
+            Sheet4.Range("A" & counterdnp & ":A" & counterdnp + 1).Value = Sheet3.Range("A" & counter).Value
+            Sheet4.Range("B" & counterdnp & ":C" & counterdnp + 1).Value = Sheet2.Range("H4").Value
+            Sheet4.Range("D" & counterdnp & ":D" & counterdnp + 1).Value = "J2"
+            Sheet4.Range("E" & counterdnp & ":E" & counterdnp + 1).Value = Sheet3.Range("C" & counter).Value
+            Sheet4.Range("G" & counterdnp & ":G" & counterdnp + 1).Value = Sheet3.Range("AB" & counter).Value
+            Sheet4.Range("J" & counterdnp & ":J" & counterdnp + 1).Value = Replace(Sheet3.Range("L" & counter).Value, ",", "")
+            Sheet4.Range("O" & counterdnp & ":O" & counterdnp + 1).Value = Sheet2.Range("H5").Value
+            Sheet4.Range("P" & counterdnp & ":P" & counterdnp + 1).Value = "05"
+            If Sheet3.Range("AA" & counter).Value > 0 Then
+                Sheet4.Range("Q" & counterdnp).Value = "40"
+                Sheet4.Range("Q" & counterdnp + 1).Value = "50"
+            Else
+                Sheet4.Range("Q" & counterdnp).Value = "50"
+                Sheet4.Range("Q" & counterdnp + 1).Value = "40"
+            End If
+            Sheet4.Range("R" & counterdnp).Value = Sheet3.Range("Q" & counter).Value
+            Sheet4.Range("R" & counterdnp + 1).Value = "320067"
+            If Sheet3.Range("AB" & counter).Value = "BRL" Then
+            Sheet4.Range("S" & counterdnp & ":S" & counterdnp + 1).Value = Sheet3.Range("L" & counter).Value & "; Invoice " & Sheet3.Range("J" & counterdnp).Value & "; DP# " & Sheet3.Range("D" & counter).Value
+            Else
+            Sheet4.Range("S" & counterdnp & ":S" & counterdnp + 1).Value = Format(Sheet2.Range("H3").Value, "MMMM") & "; AUTOACCRUAL DP# " & Sheet3.Range("D" & counter).Value & "; PO# " & Sheet3.Range("H" & counter).Value
+            End If
+            Sheet4.Range("U" & counterdnp & ":U" & counterdnp + 1).Value = Sheet3.Range("AA" & counter).Value
+            Sheet4.Range("W" & counterdnp).Value = Sheet3.Range("AC" & counter).Value
+            Sheet4.Range("BH" & counterdnp & ":BH" & counterdnp + 1).Value = Sheet3.Range("H" & counter).Value
+            Sheet4.Range("BI" & counterdnp & ":BI" & counterdnp + 1).Value = Sheet3.Range("I" & counter).Value
+            If Sheet3.Range("B" & counter).Value = "Network" Then
+                Sheet4.Range("AF" & counterdnp & ":AF" & counterdnp + 1).Value = "NW." & Sheet3.Range("W" & counter).Value
+                Sheet4.Range("BF" & counterdnp).Value = Sheet3.Range("W" & counter).Value
+                Sheet4.Range("BG" & counterdnp).Value = Sheet3.Range("X" & counter).Value
+            ElseIf Sheet3.Range("B" & counter).Value = "WBS" Then
+                Sheet4.Range("AF" & counterdnp & ":AF" & counterdnp + 1).Value = Sheet3.Range("U" & counter).Value
+                Sheet4.Range("AI" & counterdnp).Value = Sheet3.Range("U" & counter).Value
+            ElseIf Sheet3.Range("B" & counter).Value = "Order" Then
+                Sheet4.Range("Z" & counterdnp).Value = Sheet3.Range("S" & counter).Value
+                Sheet4.Range("AF" & counterdnp & ":AF" & counterdnp + 1).Value = "O." & Sheet3.Range("S" & counter).Value
+            Else
+                Sheet4.Range("Y" & counterdnp).Value = Sheet3.Range("O" & counter).Value
+                Sheet4.Range("AF" & counterdnp & ":AF" & counterdnp + 1).Value = Sheet3.Range("O" & counter).Value
+            End If
+            counterdnp = counterdnp + 2
+        End If
+        
+     Next
+        
+       End Sub
