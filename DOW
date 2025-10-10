@@ -1,3 +1,3 @@
-ids = System.Text.RegularExpressions.Regex.Matches(fileText, "(?<!\d\.)\b\d{3,}\b(?!\.\d)") _
+ids = System.Text.RegularExpressions.Regex.Matches(fileText, "(?<!\d\.)\b\d{3,}\b(?!\.\d)|[A-Z]{2}\.\d{7}\.\d{2}\.\d{2}\.\d{4}") _
         .Cast(Of System.Text.RegularExpressions.Match)() _
         .Select(Function(m) m.Value).ToArray()
